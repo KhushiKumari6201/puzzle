@@ -1,0 +1,103 @@
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.title {
+  margin-bottom: 4rem;
+  font-size: 3rem;
+  letter-spacing: 2px;
+}
+
+.games-grid {
+  display: flex;
+  gap: 3rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.game-card {
+  position: relative;
+  width: 320px;
+  height: 240px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 1px solid rgba(155, 126, 189, 0.3);
+  background: linear-gradient(145deg, rgba(22, 16, 40, 0.9), rgba(11, 7, 20, 0.95));
+}
+
+.card-content {
+  position: relative;
+  z-index: 2;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.icon {
+  font-size: 2.5rem;
+  color: var(--accent-color);
+  margin-bottom: 1rem;
+  text-shadow: 0 0 15px var(--accent-glow);
+  transition: transform 0.3s ease;
+}
+
+.game-card h2 {
+  margin-bottom: 0.8rem;
+  font-size: 1.6rem;
+}
+
+.game-card p {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.card-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(201, 168, 76, 0.15) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.game-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  border-color: var(--accent-color);
+  box-shadow: 0 15px 45px rgba(201, 168, 76, 0.15), 0 0 20px rgba(155, 126, 189, 0.2);
+}
+
+.game-card:hover .card-glow {
+  opacity: 1;
+  animation: rotateGlow 10s linear infinite;
+}
+
+.game-card:hover .icon {
+  transform: scale(1.1) rotate(5deg);
+  text-shadow: 0 0 25px var(--accent-color);
+}
+
+@keyframes rotateGlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

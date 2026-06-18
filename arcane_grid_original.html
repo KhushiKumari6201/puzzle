@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcane Grid ✦ The Master Spellcaster</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0714;
+            --panel-bg: rgba(22, 16, 40, 0.85);
+            --accent-color: #c9a84c;
+            --accent-glow: rgba(201, 168, 76, 0.4);
+            --primary-violet: #9b7ebd;
+            --secondary-violet: #4a3560;
+            --text-main: #e8d5b7;
+            --text-dim: #bba;
+            --tile-bg: rgba(42, 31, 61, 0.9);
+            --tile-border: #4a3560;
+            --tile-correct: #4caf50;
+            --transition-speed: 0.25s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            background-image: 
+                linear-gradient(rgba(11, 7, 20, 0.6), rgba(11, 7, 20, 0.8)),
+                url('bg.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 40px 20px;
+        }
+
+        /* Animated background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(155, 126, 189, 0.1), transparent 30%),
+                radial-gradient(circle at 85% 85%, rgba(201, 168, 76, 0.05), transparent 40%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            letter-spacing: 12px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            text-shadow: 0 0 25px var(--accent-glow), 0 0 50px rgba(0,0,0,0.6);
+            animation: float-title 6s ease-in-out infinite;
+        }
+
+        @keyframes float-title {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.02); }
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--primary-violet);
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-bottom: 50px;
+            font-weight: 300;
+            text-shadow: 0 0 10px rgba(155, 126, 189, 0.4);
+        }
+
+        /* HUD Styles */
+        .hud {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 40px;
+            padding: 15px 30px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--secondary-violet);
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .hud-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hud-label {
+            font-size: 0.7rem;
+            color: var(--primary-violet);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .hud-val {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        /* Game Containers */
+        .game-main {
+            display: flex;
+            gap: 60px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .target-container {
+            text-align: center;
+        }
+
+        .target-container h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--primary-violet);
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+        }
+
+        #target-grid {
+            display: grid;
+            gap: 8px;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            border: 1px solid var(--secondary-violet);
+        }
+
+        .play-container {
+            position: relative;
+            background: var(--panel-bg);
+            padding: 24px;
+            border-radius: 20px;
+            border: 1px solid var(--secondary-violet);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+
+        #play-grid {
+            position: relative;
+            display: grid;
+            gap: 12px;
+        }
+
+        /* Tile Styles */
+        .tile {
+            width: 80px;
+            height: 80px;
+            background: var(--tile-bg);
+            background-image: 
+                linear-gradient(rgba(42, 31, 61, 0.7), rgba(42, 31, 61, 0.8)),
+                url('stone.png');
+            background-size: cover;
+            border: 2px solid var(--tile-border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.3s, border-color 0.3s, box-shadow 0.3s;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        /* The sliding animation magic */
+        .tile.sliding {
+            transition: transform var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tile::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .tile:not(.empty):hover {
+            transform: scale(1.05);
+            background-image: 
+                linear-gradient(rgba(54, 42, 77, 0.6), rgba(54, 42, 77, 0.7)),
+                url('stone.png');
+            border-color: var(--primary-violet);
+            box-shadow: 0 0 25px rgba(155, 126, 189, 0.4), inset 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        .tile.empty {
+            background: rgba(0,0,0,0.4);
+            background-image: none;
+            border: 2px dashed #2a1f3d;
+            cursor: default;
+            box-shadow: none;
+        }
+
+        .tile.correct {
+            border-color: var(--tile-correct);
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.4), inset 0 0 15px rgba(0,100,0,0.2);
+        }
+
+        .tile.target-tile {
+            width: 50px;
+            height: 50px;
+            font-size: 1.4rem;
+            cursor: default;
+            background: rgba(20, 15, 30, 0.8);
+            background-image: none;
+            border: 1px solid var(--secondary-violet);
+        }
+
+        /* Level Indicators */
+        .level-dots {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--secondary-violet);
+            transition: all 0.4s;
+            border: 2px solid transparent;
+        }
+
+        .dot.active {
+            background: var(--accent-color);
+            transform: scale(1.3);
+            box-shadow: 0 0 12px var(--accent-color);
+        }
+
+        .dot.done {
+            background: var(--tile-correct);
+        }
+
+        /* Controls */
+        .controls {
+            margin-top: 40px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn {
+            background: transparent;
+            color: var(--accent-color);
+            border: 2px solid var(--accent-color);
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .btn:hover {
+            background: var(--accent-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .btn-primary {
+            background: var(--accent-color);
+            color: var(--bg-color);
+        }
+
+        /* Overlays */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 3, 10, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal {
+            background: var(--panel-bg);
+            border: 2px solid var(--accent-color);
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 0 60px rgba(0,0,0,0.8);
+            transform: scale(0.9);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        .modal p {
+            color: var(--text-dim);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .stars-container {
+            font-size: 2rem;
+            color: var(--accent-color);
+            margin-bottom: 30px;
+            letter-spacing: 15px;
+        }
+
+        /* Message */
+        #msg {
+            margin-bottom: 30px;
+            height: 20px;
+            color: var(--primary-violet);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            font-style: italic;
+        }
+
+        /* Particle System */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            background: var(--accent-color);
+            border-radius: 50%;
+            opacity: 0;
+            z-index: 2000;
+        }
+
+        @keyframes particle-fade {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; letter-spacing: 4px; }
+            .tile { width: 60px; height: 60px; font-size: 1.6rem; }
+            .tile.target-tile { width: 40px; height: 40px; font-size: 1.1rem; }
+            .game-main { gap: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Arcane Grid</h1>
+    <div class="subtitle">Assemble the Ancient Sigils</div>
+
+    <div class="level-dots" id="level-dots"></div>
+
+    <div class="hud">
+        <div class="hud-item">
+            <span class="hud-label">Moves</span>
+            <span class="hud-val" id="moves-val">0</span>
+        </div>
+        <div class="hud-item">
+            <span class="hud-label">Level</span>
+            <span class="hud-val" id="level-val">1/5</span>
+        </div>
+        <div class="hud-item">
+            <span class="hud-label">Stars</span>
+            <span class="hud-val" id="stars-val">✦✦✦</span>
+        </div>
+    </div>
+
+    <div id="msg">Solve the pattern to unlock the next spell...</div>
+
+    <div class="game-main">
+        <div class="target-container">
+            <h3>✦ Required Sigil ✦</h3>
+            <div id="target-grid"></div>
+        </div>
+
+        <div class="play-container">
+            <div id="play-grid"></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="shuffle()">🔀 Reshuffle</button>
+        <button class="btn btn-primary" onclick="window.history.back()" style="display: none;">Back</button>
+    </div>
+
+    <!-- Win Overlay -->
+    <div class="overlay" id="win-overlay">
+        <div class="modal">
+            <h2 id="win-title">✦ Spell Mastered! ✦</h2>
+            <p id="win-desc">The arcane energy resonates with your will. The pathway ahead is clear.</p>
+            <div class="stars-container" id="win-stars">✦✦✦</div>
+            <button class="btn btn-primary" id="next-level-btn" onclick="nextLevel()">Continue ➜</button>
+        </div>
+    </div>
+
+    <!-- Start Overlay -->
+    <div class="overlay active" id="start-overlay">
+        <div class="modal">
+            <h2>Arcane Grid</h2>
+            <p>Welcome, Initiate. Slide the mystical stones to match the pattern of the Master's spell. Use arrow keys or click to move.</p>
+            <button class="btn btn-primary" onclick="startGame()">Begin Trial</button>
+        </div>
+    </div>
+
+    <script>
+        const RUNES = ['🔥','💧','⚡','🌿','❄️','🌙','☀️','💎','🌀','⚗️','🔮','💫','🏺','📿','⚔️','🛡️'];
+        const LEVELS = [
+            {size: 3, runes: ['🔥','💧','⚡','🌿','❄️','🌙','☀️','💎'], shuffles: 15, starlimits: [10, 18]},
+            {size: 3, runes: ['🔮','💫','🌀','⚗️','🏺','📿','⚔️','🛡️'], shuffles: 25, starlimits: [15, 25]},
+            {size: 4, runes: RUNES.slice(0, 15), shuffles: 40, starlimits: [35, 60]},
+            {size: 4, runes: RUNES.slice(0, 15), shuffles: 60, starlimits: [45, 80]},
+            {size: 5, runes: RUNES.concat(['📜','🧿','🗝️','🧭','🕯️','🔔','🎭','🏹']), shuffles: 80, starlimits: [100, 180]}
+        ];
+
+        let currentLevelIndex = 0;
+        let tiles = [];
+        let target = [];
+        let emptyIdx = -1;
+        let moves = 0;
+        let isSolved = false;
+        let isAnimating = false;
+
+        // Sound Effects (Web Audio API simplistic approach)
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function playSound(freq, type, duration) {
+            if (!audioCtx) audioCtx = new AudioCtx();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            osc.type = type;
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        const sounds = {
+            move: () => playSound(200, 'sine', 0.1),
+            shuffle: () => playSound(150, 'sine', 0.05),
+            win: () => {
+                playSound(400, 'triangle', 0.3);
+                setTimeout(() => playSound(500, 'triangle', 0.3), 100);
+                setTimeout(() => playSound(650, 'triangle', 0.5), 200);
+            },
+            click: () => playSound(800, 'sine', 0.05)
+        };
+
+        function getLevel() {
+            return LEVELS[Math.min(currentLevelIndex, LEVELS.length - 1)];
+        }
+
+        function createParticles(x, y, color) {
+            for (let i = 0; i < 15; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const size = Math.random() * 6 + 2;
+                p.style.width = `${size}px`;
+                p.style.height = `${size}px`;
+                p.style.left = `${x}px`;
+                p.style.top = `${y}px`;
+                p.style.background = color || 'var(--accent-color)';
+                
+                const tx = (Math.random() - 0.5) * 150;
+                const ty = (Math.random() - 0.5) * 150;
+                p.style.setProperty('--tx', `${tx}px`);
+                p.style.setProperty('--ty', `${ty}px`);
+                
+                p.style.animation = `particle-fade ${0.5 + Math.random() * 0.5}s forwards`;
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 1000);
+            }
+        }
+
+        function initLevel() {
+            isSolved = false;
+            moves = 0;
+            const lv = getLevel();
+            
+            // Build target
+            const n = lv.size * lv.size - 1;
+            const pool = [...lv.runes].sort(() => Math.random() - 0.5);
+            target = [];
+            for (let i = 0; i < n; i++) target.push(pool[i % pool.length]);
+            target.push(null);
+            
+            tiles = [...target];
+            emptyIdx = tiles.indexOf(null);
+            
+            renderLevelDots();
+            renderTarget();
+            shuffleTiles();
+            renderPlayGrid();
+            updateHud();
+            
+            isAnimating = false;
+        }
+
+        function shuffleTiles() {
+            const lv = getLevel();
+            const sz = lv.size;
+            for (let i = 0; i < lv.shuffles * 4; i++) {
+                const neighbors = getNeighbors(emptyIdx, sz);
+                const n = neighbors[Math.floor(Math.random() * neighbors.length)];
+                silentSwap(n);
+            }
+        }
+
+        function silentSwap(idx) {
+            tiles[emptyIdx] = tiles[idx];
+            tiles[idx] = null;
+            emptyIdx = idx;
+        }
+
+        function getNeighbors(idx, sz) {
+            const r = Math.floor(idx / sz), c = idx % sz, nb = [];
+            if (r > 0) nb.push(idx - sz);
+            if (r < sz - 1) nb.push(idx + sz);
+            if (c > 0) nb.push(idx - 1);
+            if (c < sz - 1) nb.push(idx + 1);
+            return nb;
+        }
+
+        function renderLevelDots() {
+            const container = document.getElementById('level-dots');
+            container.innerHTML = '';
+            LEVELS.forEach((_, i) => {
+                const dot = document.createElement('div');
+                dot.className = `dot ${i < currentLevelIndex ? 'done' : i === currentLevelIndex ? 'active' : ''}`;
+                container.appendChild(dot);
+            });
+        }
+
+        function renderTarget() {
+            const lv = getLevel();
+            const grid = document.getElementById('target-grid');
+            grid.style.gridTemplateColumns = `repeat(${lv.size}, 1fr)`;
+            grid.innerHTML = '';
+            target.forEach(t => {
+                const d = document.createElement('div');
+                d.className = `tile target-tile ${t === null ? 'empty' : ''}`;
+                if (t) d.textContent = t;
+                grid.appendChild(d);
+            });
+        }
+
+        function renderPlayGrid() {
+            const lv = getLevel();
+            const grid = document.getElementById('play-grid');
+            grid.style.gridTemplateColumns = `repeat(${lv.size}, 1fr)`;
+            grid.innerHTML = '';
+            
+            tiles.forEach((t, i) => {
+                const d = document.createElement('div');
+                d.className = `tile ${t === null ? 'empty' : ''} ${!isSolved && t === target[i] ? 'correct' : ''}`;
+                d.id = `tile-${i}`;
+                if (t !== null) {
+                    d.textContent = t;
+                    d.onclick = (e) => handleTileClick(i, e);
+                }
+                grid.appendChild(d);
+            });
+        }
+
+        function handleTileClick(idx, e) {
+            if (isSolved || isAnimating) return;
+            const sz = getLevel().size;
+            const neighbors = getNeighbors(emptyIdx, sz);
+            if (neighbors.includes(idx)) {
+                moveTile(idx);
+            }
+        }
+
+        function moveTile(idx) {
+            if (isAnimating) return;
+            isAnimating = true;
+            
+            const sz = getLevel().size;
+            const tileEl = document.getElementById(`tile-${idx}`);
+            const emptyEl = document.getElementById(`tile-${emptyIdx}`);
+            
+            // Calculate movement for animation
+            const tileRect = tileEl.getBoundingClientRect();
+            const emptyRect = emptyEl.getBoundingClientRect();
+            const dx = emptyRect.left - tileRect.left;
+            const dy = emptyRect.top - tileRect.top;
+            
+            tileEl.style.transition = `transform var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1)`;
+            tileEl.style.transform = `translate(${dx}px, ${dy}px)`;
+            tileEl.style.zIndex = "10";
+
+            sounds.move();
+
+            setTimeout(() => {
+                // Actual state update
+                tiles[emptyIdx] = tiles[idx];
+                tiles[idx] = null;
+                const oldEmpty = emptyIdx;
+                emptyIdx = idx;
+                
+                moves++;
+                updateHud();
+                renderPlayGrid();
+                
+                isAnimating = false;
+                checkWin(oldEmpty);
+            }, 250);
+        }
+
+        function checkWin(lastIndex) {
+            let win = true;
+            for (let i = 0; i < tiles.length; i++) {
+                if (tiles[i] !== target[i]) {
+                    win = false;
+                    break;
+                }
+            }
+            if (win) {
+                isSolved = true;
+                sounds.win();
+                
+                // Blast particles from each tile
+                const playGrid = document.getElementById('play-grid');
+                const rect = playGrid.getBoundingClientRect();
+                createParticles(rect.left + rect.width/2, rect.top + rect.height/2, 'var(--accent-color)');
+                
+                setTimeout(() => {
+                    showWinOverlay();
+                }, 800);
+            }
+        }
+
+        function updateHud() {
+            const lv = getLevel();
+            document.getElementById('moves-val').textContent = moves;
+            document.getElementById('level-val').textContent = `${currentLevelIndex + 1}/${LEVELS.length}`;
+            
+            const stars = moves <= lv.starlimits[0] ? 3 : moves <= lv.starlimits[1] ? 2 : 1;
+            const starText = '✦'.repeat(stars) + '✧'.repeat(3 - stars);
+            document.getElementById('stars-val').textContent = starText;
+        }
+
+        function showWinOverlay() {
+            const lv = getLevel();
+            const stars = moves <= lv.starlimits[0] ? 3 : moves <= lv.starlimits[1] ? 2 : 1;
+            document.getElementById('win-stars').textContent = '✦'.repeat(stars) + '✧'.repeat(3 - stars);
+            
+            const descs = [
+                "The runes obey, though the path was arduous.",
+                "The spell holds firm. Your power grows.",
+                "Flawless execution! The Master would be proud."
+            ];
+            document.getElementById('win-desc').textContent = descs[stars - 1];
+            
+            document.getElementById('next-level-btn').textContent = currentLevelIndex < LEVELS.length - 1 ? "Next Spell ➜" : "Mastered! Replay?";
+            document.getElementById('win-overlay').classList.add('active');
+        }
+
+        function nextLevel() {
+            document.getElementById('win-overlay').classList.remove('active');
+            if (currentLevelIndex < LEVELS.length - 1) {
+                currentLevelIndex++;
+            } else {
+                currentLevelIndex = 0;
+            }
+            initLevel();
+        }
+
+        function shuffle() {
+            if (isSolved) return;
+            sounds.click();
+            initLevel();
+        }
+
+        function startGame() {
+            sounds.click();
+            document.getElementById('start-overlay').classList.remove('active');
+            initLevel();
+        }
+
+        // Keyboard Controls
+        document.addEventListener('keydown', e => {
+            if (isSolved || isAnimating || document.querySelector('.overlay.active')) return;
+            
+            const sz = getLevel().size;
+            const r = Math.floor(emptyIdx / sz);
+            const c = emptyIdx % sz;
+            
+            let targetIdx = -1;
+            if (e.key === 'ArrowUp' && r < sz - 1) targetIdx = emptyIdx + sz;
+            if (e.key === 'ArrowDown' && r > 0) targetIdx = emptyIdx - sz;
+            if (e.key === 'ArrowLeft' && c < sz - 1) targetIdx = emptyIdx + 1;
+            if (e.key === 'ArrowRight' && c > 0) targetIdx = emptyIdx - 1;
+            
+            if (targetIdx !== -1) {
+                e.preventDefault();
+                moveTile(targetIdx);
+            }
+        });
+    </script>
+</body>
+</html>

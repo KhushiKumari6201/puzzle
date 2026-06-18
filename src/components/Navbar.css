@@ -1,0 +1,36 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  margin: 1rem;
+  border-radius: 8px;
+}
+
+.brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.nav-links a {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.login-btn {
+  background: rgba(201, 168, 76, 0.1);
+  padding: 8px 16px;
+  border: 1px solid var(--accent-color);
+  border-radius: 4px;
+}
+.login-btn:hover {
+  background: rgba(201, 168, 76, 0.2);
+  color: var(--accent-color);
+  box-shadow: inset 0 0 10px rgba(201, 168, 76, 0.3);
+}
