@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import ArcaneGrid from './pages/games/ArcaneGrid';
+import ShadowsEnd from './pages/games/ShadowsEnd';
+import MemoryMatch from './pages/games/MemoryMatch';
 import './App.css';
 
 function App() {
@@ -13,6 +15,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/game/arcane" element={<ArcaneGrid />} />
+            <Route path="/game/shadow" element={<ShadowsEnd />} />
+            <Route path="/game/match" element={<MemoryMatch />} />
             {/* We will add Leaderboard route later */}
           </Routes>
         </main>
