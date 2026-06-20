@@ -1,0 +1,116 @@
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 100px);
+  padding: 2rem;
+}
+
+.auth-panel {
+  width: 100%;
+  max-width: 400px;
+  padding: 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  border-radius: 12px;
+  background: var(--panel-bg);
+  border: 1px solid var(--tile-border);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(74, 53, 96, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.auth-header h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--accent-color);
+  text-shadow: 0 0 15px var(--accent-glow);
+}
+
+.auth-header p {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  color: var(--text-main);
+  font-family: 'Cinzel', serif;
+  letter-spacing: 1px;
+}
+
+.form-group input {
+  padding: 0.75rem 1rem;
+  background: rgba(11, 7, 20, 0.6);
+  border: 1px solid var(--tile-border);
+  border-radius: 6px;
+  color: var(--text-main);
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  transition: all var(--transition-speed);
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 10px var(--accent-glow);
+  background: rgba(42, 31, 61, 0.8);
+}
+
+.form-group input::placeholder {
+  color: rgba(232, 213, 183, 0.3);
+}
+
+.auth-submit-btn {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, rgba(74, 53, 96, 0.8), rgba(42, 31, 61, 0.9));
+  border: 1px solid var(--accent-color);
+}
+
+.auth-submit-btn:hover {
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.2), rgba(74, 53, 96, 0.9));
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px var(--accent-glow);
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-dim);
+}
+
+.auth-link {
+  color: var(--accent-color);
+  font-weight: bold;
+  margin-left: 0.5rem;
+  text-decoration: none;
+  transition: text-shadow var(--transition-speed);
+}
+
+.auth-link:hover {
+  text-shadow: 0 0 8px var(--accent-glow);
+}

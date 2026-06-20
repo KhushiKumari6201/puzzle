@@ -4,6 +4,8 @@ import Home from './pages/Home';
 import ArcaneGrid from './pages/games/ArcaneGrid';
 import ShadowsEnd from './pages/games/ShadowsEnd';
 import MemoryMatch from './pages/games/MemoryMatch';
+import Login from './pages/Login';
+import Register from './pages/Register';
 import './App.css';
 
 function App() {
@@ -17,6 +19,8 @@ function App() {
             <Route path="/game/arcane" element={<ArcaneGrid />} />
             <Route path="/game/shadow" element={<ShadowsEnd />} />
             <Route path="/game/match" element={<MemoryMatch />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             {/* We will add Leaderboard route later */}
           </Routes>
         </main>
