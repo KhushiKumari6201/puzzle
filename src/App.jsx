@@ -6,8 +6,8 @@ import ShadowsEnd from './pages/games/ShadowsEnd';
 import MemoryMatch from './pages/games/MemoryMatch';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Leaderboard from './pages/Leaderboard';
 import './App.css';
-
 function App() {
   return (
     <Router>
@@ -21,7 +21,7 @@ function App() {
             <Route path="/game/match" element={<MemoryMatch />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            {/* We will add Leaderboard route later */}
+            <Route path="/leaderboard" element={<Leaderboard />} />
           </Routes>
         </main>
       </div>
