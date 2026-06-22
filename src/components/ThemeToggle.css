@@ -1,0 +1,153 @@
+.theme-toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+}
+
+.theme-toggle:hover {
+  background: none;
+  box-shadow: none;
+}
+
+.toggle-track {
+  position: relative;
+  width: 64px;
+  height: 32px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #1a1040, #2d1b60);
+  border: 1px solid var(--toggle-border, rgba(155, 126, 189, 0.4));
+  overflow: hidden;
+  transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="light"] .toggle-track {
+  background: linear-gradient(135deg, #87ceeb, #b8e4f9);
+  border-color: rgba(135, 206, 235, 0.6);
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+              background 0.5s ease;
+  z-index: 2;
+}
+
+.toggle-thumb.dark {
+  transform: translateX(0);
+  background: linear-gradient(135deg, #e8e0d0, #d4c8a8);
+  box-shadow: 0 0 8px rgba(232, 224, 208, 0.6),
+              inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-thumb.light {
+  transform: translateX(32px);
+  background: linear-gradient(135deg, #ffd700, #ffaa00);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.6),
+              0 0 24px rgba(255, 170, 0, 0.3),
+              inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.icon-wrapper {
+  width: 16px;
+  height: 16px;
+  position: relative;
+}
+
+.sun-icon,
+.moon-icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.sun-icon {
+  color: #b87333;
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.5);
+}
+
+.sun-icon.active {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.moon-icon {
+  color: #2d1b60;
+  opacity: 0;
+  transform: rotate(90deg) scale(0.5);
+}
+
+.moon-icon.active {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+/* Track decorations */
+.track-stars,
+.track-clouds {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.track-stars {
+  opacity: 1;
+}
+
+[data-theme="light"] .track-stars {
+  opacity: 0;
+}
+
+.track-clouds {
+  opacity: 0;
+}
+
+[data-theme="light"] .track-clouds {
+  opacity: 1;
+}
+
+.star {
+  position: absolute;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 6px;
+  animation: twinkle 2s infinite alternate;
+}
+
+.star.s1 { top: 6px; right: 10px; animation-delay: 0s; }
+.star.s2 { top: 16px; right: 18px; animation-delay: 0.7s; font-size: 4px; }
+.star.s3 { top: 8px; right: 24px; animation-delay: 1.4s; font-size: 5px; }
+
+@keyframes twinkle {
+  0% { opacity: 0.3; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1.2); }
+}
+
+.cloud {
+  position: absolute;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 10px;
+}
+
+.cloud.c1 { top: 2px; left: 8px; font-size: 12px; }
+.cloud.c2 { top: 14px; left: 16px; font-size: 8px; }

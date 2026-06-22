@@ -16,8 +16,9 @@
   border-radius: 12px;
   background: var(--panel-bg);
   border: 1px solid var(--tile-border);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(74, 53, 96, 0.2);
+  box-shadow: 0 8px 32px var(--shadow-overlay), inset 0 0 20px var(--hover-lift-bg);
   backdrop-filter: blur(10px);
+  transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
 .auth-header {
@@ -58,7 +59,7 @@
 
 .form-group input {
   padding: 0.75rem 1rem;
-  background: rgba(11, 7, 20, 0.6);
+  background: var(--input-bg);
   border: 1px solid var(--tile-border);
   border-radius: 6px;
   color: var(--text-main);
@@ -71,11 +72,11 @@
   outline: none;
   border-color: var(--accent-color);
   box-shadow: 0 0 10px var(--accent-glow);
-  background: rgba(42, 31, 61, 0.8);
+  background: var(--input-focus-bg);
 }
 
 .form-group input::placeholder {
-  color: rgba(232, 213, 183, 0.3);
+  color: var(--placeholder-color);
 }
 
 .auth-submit-btn {
@@ -86,12 +87,12 @@
   font-weight: bold;
   letter-spacing: 1px;
   border-radius: 6px;
-  background: linear-gradient(135deg, rgba(74, 53, 96, 0.8), rgba(42, 31, 61, 0.9));
+  background: linear-gradient(135deg, var(--auth-submit-from), var(--auth-submit-to));
   border: 1px solid var(--accent-color);
 }
 
 .auth-submit-btn:hover {
-  background: linear-gradient(135deg, rgba(201, 168, 76, 0.2), rgba(74, 53, 96, 0.9));
+  background: linear-gradient(135deg, var(--auth-submit-hover-from), var(--auth-submit-hover-to));
   transform: translateY(-2px);
   box-shadow: 0 5px 15px var(--accent-glow);
 }
