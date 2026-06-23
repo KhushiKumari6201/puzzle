@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Puzzle Difficulty Selector</title>
+  <style>
+    :root {
+      --easy: #10B981;
+      --medium: #F59E0B;
+      --hard: #F97316;
+      --expert: #EF4444;
+      --bg-gradient: radial-gradient(circle at top center, #1e1e2e 0%, #0f0f17 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3rem 1rem;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    .header h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header p {
+      color: #94a3b8;
+      font-size: 1.125rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      max-width: 1200px;
+      width: 100%;
+    }
+
+    .card {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 2rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      flex-direction: column;
+      animation: fadeInUp 0.6s ease-out both;
+    }
+
+    .card:nth-child(1) { animation-delay: 0.1s; --level-color: var(--easy); }
+    .card:nth-child(2) { animation-delay: 0.2s; --level-color: var(--medium); }
+    .card:nth-child(3) { animation-delay: 0.3s; --level-color: var(--hard); }
+    .card:nth-child(4) { animation-delay: 0.4s; --level-color: var(--expert); }
+
+    .card-glow {
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, var(--level-color) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .card:hover {
+      transform: translateY(-8px) scale(1.02);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4),
+                  0 0 20px rgba(var(--level-color), 0.1);
+    }
+
+    .card:hover .card-glow { opacity: 0.15; }
+
+    .card.selected {
+      border-color: var(--level-color);
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.05);
+      background: rgba(30, 41, 59, 0.7);
+    }
+
+    .card.selected .card-glow { opacity: 0.25; }
+
+    .card-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover .icon { transform: scale(1.1) rotate(5deg); }
+
+    .card h2 {
+      color: var(--level-color);
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card p {
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+      flex-grow: 1;
+    }
+
+    .progress-wrapper {
+      background: rgba(0, 0, 0, 0.2);
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.02);
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--level-color);
+      width: 0%;
+      border-radius: 3px;
+      transition: width 0.5s ease;
+      box-shadow: 0 0 8px var(--level-color);
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      flex-grow: 1;
+    }
+
+    .btn:hover { background: rgba(255, 255, 255, 0.1); }
+
+    .card.selected .btn.select-btn {
+      background: var(--level-color);
+      color: #000;
+      border-color: transparent;
+    }
+
+    .btn.simulate-btn {
+      flex-grow: 0;
+      color: #94a3b8;
+      font-size: 0.8rem;
+    }
+
+    .btn.simulate-btn:hover { color: #fff; }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Select Difficulty</h1>
+    <p>Choose your challenge level to begin</p>
+  </div>
+
+  <div class="grid" id="difficulty-grid">
+    <!-- Cards will be injected by JS -->
+  </div>
+
+  <script>
+    const levels = [
+      { id: 'easy', name: 'Easy', description: 'No timer, 3 hints', icon: '🌱' },
+      { id: 'medium', name: 'Medium', description: 'Optional timer, 2 hints', icon: '⚖️' },
+      { id: 'hard', name: 'Hard', description: 'Timer + penalty, 1 hint', icon: '🔥' },
+      { id: 'expert', name: 'Expert', description: 'Strict timer, no hints, leaderboard only', icon: '☠️' }
+    ];
+
+    let currentSelected = localStorage.getItem('puzzle_difficulty') || null;
+    let progressData = JSON.parse(localStorage.getItem('puzzle_progress')) || {
+      easy: 0, medium: 0, hard: 0, expert: 0
+    };
+
+    const grid = document.getElementById('difficulty-grid');
+
+    function saveState() {
+      if (currentSelected) localStorage.setItem('puzzle_difficulty', currentSelected);
+      localStorage.setItem('puzzle_progress', JSON.stringify(progressData));
+    }
+
+    function render() {
+      grid.innerHTML = '';
+      levels.forEach(level => {
+        const isSelected = currentSelected === level.id;
+        const progress = progressData[level.id];
+
+        const card = document.createElement('div');
+        card.className = `card ${isSelected ? 'selected' : ''}`;
+        card.onclick = () => selectLevel(level.id);
+
+        card.innerHTML = `
+          <div class="card-glow"></div>
+          <div class="card-content">
+            <div class="icon">${level.icon}</div>
+            <h2>${level.name}</h2>
+            <p>${level.description}</p>
+            
+            <div class="progress-wrapper">
+              <div class="progress-header">
+                <span>Progress</span>
+                <span id="progress-text-${level.id}">${progress}%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill-${level.id}" style="width: ${progress}%"></div>
+              </div>
+            </div>
+
+            <div class="card-actions">
+              <button class="btn select-btn" onclick="event.stopPropagation(); selectLevel('${level.id}')">
+                ${isSelected ? 'Selected' : 'Select'}
+              </button>
+              <button class="btn simulate-btn" onclick="event.stopPropagation(); simulateProgress('${level.id}')" title="Add 10% progress">
+                +10%
+              </button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function selectLevel(id) {
+      currentSelected = id;
+      saveState();
+      render();
+    }
+
+    function simulateProgress(id) {
+      progressData[id] = Math.min(100, progressData[id] + 10);
+      saveState();
+      
+      // Update DOM directly for smooth animation without re-rendering entire grid
+      const fill = document.getElementById(`progress-fill-${id}`);
+      const text = document.getElementById(`progress-text-${id}`);
+      if (fill && text) {
+        fill.style.width = `${progressData[id]}%`;
+        text.textContent = `${progressData[id]}%`;
+      }
+    }
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>

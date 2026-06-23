@@ -1,0 +1,259 @@
+.difficulty-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: radial-gradient(circle at center, #1a1b26 0%, #0f0f17 100%);
+}
+
+.difficulty-header {
+  text-align: center;
+  margin-bottom: 4rem;
+  animation: fadeInDown 0.8s ease-out;
+}
+
+.difficulty-header h1 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin: 0 0 1rem 0;
+  background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
+}
+
+.difficulty-header p {
+  font-size: 1.25rem;
+  color: #94a3b8;
+  margin: 0;
+  font-weight: 400;
+}
+
+.difficulty-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  perspective: 1000px;
+}
+
+.difficulty-card {
+  position: relative;
+  background: rgba(30, 41, 59, 0.4);
+  border-radius: 24px;
+  padding: 2rem;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: fadeInUp 0.6s ease-out both;
+}
+
+.difficulty-card:nth-child(1) { animation-delay: 0.1s; }
+.difficulty-card:nth-child(2) { animation-delay: 0.2s; }
+.difficulty-card:nth-child(3) { animation-delay: 0.3s; }
+.difficulty-card:nth-child(4) { animation-delay: 0.4s; }
+
+.card-bg-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, var(--level-color) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.difficulty-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4),
+              0 0 20px rgba(var(--level-color), 0.1);
+}
+
+.difficulty-card:hover .card-bg-glow {
+  opacity: 0.15;
+}
+
+.difficulty-card.selected {
+  border-color: var(--level-color);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3),
+              inset 0 0 20px rgba(255, 255, 255, 0.05);
+  background: rgba(30, 41, 59, 0.6);
+}
+
+.difficulty-card.selected .card-bg-glow {
+  opacity: 0.25;
+}
+
+.card-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.card-icon {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+  transition: transform 0.3s ease;
+}
+
+.difficulty-card:hover .card-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.difficulty-card h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: var(--level-color);
+  letter-spacing: 0.02em;
+}
+
+.difficulty-card p {
+  color: #cbd5e1;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0 0 2rem 0;
+  flex-grow: 1;
+}
+
+.progress-section {
+  margin-bottom: 2rem;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.progress-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--level-color);
+  border-radius: 4px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 10px var(--level-color);
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.select-btn {
+  flex-grow: 1;
+  padding: 0.875rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.select-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.difficulty-card.selected .select-btn {
+  background: var(--level-color);
+  color: #000;
+  border-color: transparent;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.simulate-btn {
+  width: 48px;
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.875rem;
+}
+
+.simulate-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .difficulty-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .difficulty-header h1 {
+    font-size: 2.5rem;
+  }
+  
+  .difficulty-container {
+    padding: 1.5rem;
+  }
+}

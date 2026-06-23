@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import DifficultySelector from '../components/DifficultySelector/DifficultySelector';
 import './Home.css';
 
 function Home() {
@@ -42,6 +43,11 @@ function Home() {
           </div>
           <div className="card-background"></div>
         </Link>
+      </div>
+      
+      {/* Added Difficulty Selector here */}
+      <div style={{ marginTop: '4rem' }}>
+        <DifficultySelector />
       </div>
     </div>
   );
