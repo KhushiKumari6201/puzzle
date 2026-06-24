@@ -11,6 +11,7 @@ function Navbar() {
       <div className="nav-links">
         <Link to="/">Games</Link>
         <Link to="/leaderboard">Leaderboard</Link>
+        <a href="/admin.html" className="admin-link">Admin Panel</a>
         <ThemeToggle />
         <Link to="/login" className="login-btn">Login / Register</Link>
       </div>

@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel - Arcane Puzzle Hub</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Admin CSS -->
+  <link rel="stylesheet" href="/src/admin/admin.css">
+</head>
+<body>
+
+  <!-- Login Screen -->
+  <div id="login-screen" class="active">
+    <div class="login-card glass-panel">
+      <h1 class="logo-text">Arcane Admin</h1>
+      <p class="subtitle">Secure Access Portal</p>
+      
+      <form id="login-form">
+        <div class="input-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="admin" required>
+        </div>
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••" required>
+        </div>
+        <div class="input-group">
+          <label for="role">Role</label>
+          <select id="role">
+            <option value="admin">Administrator</option>
+            <option value="editor">Puzzle Editor</option>
+            <option value="viewer">Analyst Viewer</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Enter Portal</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div id="admin-dashboard" class="hidden">
+    <!-- Sidebar -->
+    <aside class="sidebar glass-panel">
+      <div class="sidebar-header">
+        <h2 class="logo-text">Arcane Admin</h2>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" data-target="editor">
+          <span class="icon">🧩</span> Puzzle Editor
+        </button>
+        <button class="nav-btn" data-target="analytics">
+          <span class="icon">📈</span> Analytics
+        </button>
+        <button class="nav-btn" data-target="feedback">
+          <span class="icon">💬</span> Feedback Inbox
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="theme-switch-wrapper">
+          <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" checked />
+            <div class="slider round"></div>
+          </label>
+          <span>Dark Mode</span>
+        </div>
+        
+        <div class="user-profile">
+          <div class="avatar">A</div>
+          <div class="user-info">
+            <span class="username" id="display-username">Admin</span>
+            <span class="role" id="display-role">Administrator</span>
+          </div>
+        </div>
+        <button id="logout-btn" class="btn btn-danger btn-sm">Logout</button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <!-- Puzzle Editor Section -->
+      <section id="editor" class="dashboard-section active">
+        <header class="section-header">
+          <h2>Puzzle Editor</h2>
+          <div class="header-actions">
+            <select id="puzzle-difficulty" class="input-select">
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+            <button class="btn btn-outline" id="preview-btn">Preview</button>
+            <button class="btn btn-primary" id="publish-btn">Publish</button>
+            <span class="status-badge draft">Draft</span>
+          </div>
+        </header>
+
+        <div class="editor-workspace">
+          <!-- Toolbox (Draggables) -->
+          <div class="toolbox glass-panel">
+            <h3>Elements</h3>
+            <div class="draggable-item" draggable="true" data-type="block">🧱 Stone Block</div>
+            <div class="draggable-item" draggable="true" data-type="gem">💎 Arcane Gem</div>
+            <div class="draggable-item" draggable="true" data-type="trap">🔥 Fire Trap</div>
+            <div class="draggable-item" draggable="true" data-type="portal">🌀 Portal</div>
+          </div>
+          
+          <!-- Canvas (Dropzone) -->
+          <div class="canvas glass-panel" id="puzzle-canvas">
+            <div class="canvas-placeholder">Drag elements here to build your puzzle</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Analytics Section -->
+      <section id="analytics" class="dashboard-section hidden">
+        <header class="section-header">
+          <h2>Analytics Dashboard</h2>
+          <div class="date-filter">
+            <select class="input-select">
+              <option>Last 7 Days</option>
+              <option>Last 30 Days</option>
+              <option>All Time</option>
+            </select>
+          </div>
+        </header>
+
+        <div class="stats-grid">
+          <div class="stat-card glass-panel">
+            <h4>Total Players</h4>
+            <div class="stat-value">12,450</div>
+            <div class="stat-trend positive">+15% this week</div>
+          </div>
+          <div class="stat-card glass-panel">
+            <h4>Avg Completion Rate</h4>
+            <div class="stat-value">68%</div>
+            <div class="stat-trend negative">-2% this week</div>
+          </div>
+          <div class="stat-card glass-panel">
+            <h4>Avg Time per Puzzle</h4>
+            <div class="stat-value">4m 12s</div>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-container glass-panel">
+            <h3>Completion Rate Over Time</h3>
+            <canvas id="completionChart"></canvas>
+          </div>
+          <div class="chart-container glass-panel">
+            <h3>Drop-off Funnel (Levels)</h3>
+            <canvas id="funnelChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- Feedback Inbox Section -->
+      <section id="feedback" class="dashboard-section hidden">
+        <header class="section-header">
+          <h2>Feedback Inbox</h2>
+          <div class="filter-group">
+            <select id="filter-type" class="input-select">
+              <option value="all">All Types</option>
+              <option value="bug">Bugs</option>
+              <option value="suggestion">Suggestions</option>
+            </select>
+            <select id="filter-status" class="input-select">
+              <option value="all">All Statuses</option>
+              <option value="open">Open</option>
+              <option value="in-progress">In Progress</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </div>
+        </header>
+
+        <div class="feedback-table-container glass-panel">
+          <table class="feedback-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Priority</th>
+                <th>Description</th>
+                <th>Player</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="feedback-tbody">
+              <!-- Feedback rows will be rendered here by JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script type="module" src="/src/admin/admin.js"></script>
+</body>
+</html>
