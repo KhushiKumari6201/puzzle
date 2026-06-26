@@ -119,32 +119,7 @@ function initEditor() {
   const publishBtn = document.getElementById('publish-btn');
   const statusBadge = document.querySelector('.status-badge');
 
-  draggables.forEach(draggable => {
-    draggable.addEventListener('dragstart', (e) => {
-      e.dataTransfer.setData('text/plain', draggable.dataset.type);
-      draggable.classList.add('dragging');
-    });
-
-    draggable.addEventListener('dragend', () => {
-      draggable.classList.remove('dragging');
-    });
-  });
-
-  canvas.addEventListener('dragover', e => {
-    e.preventDefault();
-    canvas.style.borderColor = 'var(--primary-color)';
-  });
-
-  canvas.addEventListener('dragleave', () => {
-    canvas.style.borderColor = 'transparent';
-  });
-
-  canvas.addEventListener('drop', e => {
-    e.preventDefault();
-    canvas.style.borderColor = 'transparent';
-    const type = e.dataTransfer.getData('text/plain');
-    if (!type) return;
-
+  function addElementToCanvas(type) {
     // Remove placeholder
     const placeholder = canvas.querySelector('.canvas-placeholder');
     if (placeholder) placeholder.remove();
@@ -161,23 +136,81 @@ function initEditor() {
     };
     
     el.innerHTML = `
-      ${icons[type]}
+      <span class="canvas-item-icon">${icons[type] || '❔'}</span>
       <div class="remove-btn">×</div>
     `;
 
     // Remove logic
-    el.querySelector('.remove-btn').addEventListener('click', () => {
+    el.querySelector('.remove-btn').addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent triggering the item click
       el.remove();
       if (canvas.children.length === 0) {
-        canvas.innerHTML = '<div class="canvas-placeholder">Drag elements here to build your puzzle</div>';
+        canvas.innerHTML = '<div class="canvas-placeholder">Select elements to build your puzzle</div>';
       }
       statusBadge.textContent = 'Draft';
       statusBadge.className = 'status-badge draft';
+    });
+    
+    // Shuffle logic: Clicking the block changes it to a random different type dynamically
+    el.addEventListener('click', () => {
+      if (el.classList.contains('shuffling')) return;
+      
+      el.classList.add('shuffling');
+
+      // Change the icon exactly when it's rotated 90deg (halfway through the 0.4s animation = 0.2s)
+      setTimeout(() => {
+        const types = ['block', 'gem', 'trap', 'portal'];
+        const availableTypes = types.filter(t => icons[t] !== el.querySelector('.canvas-item-icon').textContent);
+        const newType = availableTypes[Math.floor(Math.random() * availableTypes.length)];
+        
+        el.querySelector('.canvas-item-icon').textContent = icons[newType];
+        statusBadge.textContent = 'Draft';
+        statusBadge.className = 'status-badge draft';
+      }, 200);
+
+      // Remove the shuffling class after animation ends
+      setTimeout(() => {
+        el.classList.remove('shuffling');
+      }, 400);
     });
 
     canvas.appendChild(el);
     statusBadge.textContent = 'Draft';
     statusBadge.className = 'status-badge draft';
+  }
+
+  draggables.forEach(draggable => {
+    draggable.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('text/plain', draggable.dataset.type);
+      draggable.classList.add('dragging');
+    });
+
+    draggable.addEventListener('dragend', () => {
+      draggable.classList.remove('dragging');
+    });
+    
+    // Allow clicking to add
+    draggable.addEventListener('click', () => {
+      addElementToCanvas(draggable.dataset.type);
+    });
+  });
+
+  canvas.addEventListener('dragover', e => {
+    e.preventDefault();
+    canvas.style.borderColor = 'rgba(130, 140, 255, 0.5)';
+  });
+
+  canvas.addEventListener('dragleave', () => {
+    canvas.style.borderColor = 'transparent';
+  });
+
+  canvas.addEventListener('drop', e => {
+    e.preventDefault();
+    canvas.style.borderColor = 'transparent';
+    const type = e.dataTransfer.getData('text/plain');
+    if (!type) return;
+
+    addElementToCanvas(type);
   });
 
   publishBtn.addEventListener('click', () => {
@@ -187,6 +220,68 @@ function initEditor() {
     }
     statusBadge.textContent = 'Published';
     statusBadge.className = 'status-badge published';
+  });
+
+  // Board Tools
+  const shuffleBtn = document.getElementById('btn-shuffle');
+  const autofillBtn = document.getElementById('btn-autofill');
+  const clearBtn = document.getElementById('btn-clear');
+
+  shuffleBtn.addEventListener('click', () => {
+    const items = Array.from(canvas.querySelectorAll('.canvas-item'));
+    if (items.length === 0) return;
+    
+    // Extract current icons to shuffle them
+    const currentIcons = items.map(item => item.querySelector('.canvas-item-icon').textContent);
+    
+    // Fisher-Yates shuffle the icons array
+    for (let i = currentIcons.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [currentIcons[i], currentIcons[j]] = [currentIcons[j], currentIcons[i]];
+    }
+
+    // Apply cascading 3D flip to all items
+    items.forEach((item, index) => {
+      setTimeout(() => {
+        item.classList.add('shuffling');
+
+        // Swap the icon halfway through the flip
+        setTimeout(() => {
+          item.querySelector('.canvas-item-icon').textContent = currentIcons[index];
+        }, 200);
+
+        // Remove the shuffling class
+        setTimeout(() => {
+          item.classList.remove('shuffling');
+        }, 400);
+
+      }, index * 25); // 25ms stagger between each block
+    });
+
+    statusBadge.textContent = 'Draft';
+    statusBadge.className = 'status-badge draft';
+  });
+
+  autofillBtn.addEventListener('click', () => {
+    const items = Array.from(canvas.querySelectorAll('.canvas-item'));
+    const totalSlots = 64; // 8x8 grid
+    const remaining = totalSlots - items.length;
+    
+    if (remaining > 0) {
+      const types = ['block', 'gem', 'trap', 'portal'];
+      for (let i = 0; i < remaining; i++) {
+        const randomType = types[Math.floor(Math.random() * types.length)];
+        addElementToCanvas(randomType);
+      }
+    }
+  });
+
+  clearBtn.addEventListener('click', () => {
+    if (confirm('Are you sure you want to clear the entire board?')) {
+      canvas.innerHTML = '<div class="canvas-placeholder">Select elements to build your puzzle</div>';
+      statusBadge.textContent = 'Draft';
+      statusBadge.className = 'status-badge draft';
+    }
   });
 }
 

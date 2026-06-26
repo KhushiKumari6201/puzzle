@@ -107,17 +107,37 @@
 
         <div class="editor-workspace">
           <!-- Toolbox (Draggables) -->
-          <div class="toolbox glass-panel">
-            <h3>Elements</h3>
-            <div class="draggable-item" draggable="true" data-type="block">🧱 Stone Block</div>
-            <div class="draggable-item" draggable="true" data-type="gem">💎 Arcane Gem</div>
-            <div class="draggable-item" draggable="true" data-type="trap">🔥 Fire Trap</div>
-            <div class="draggable-item" draggable="true" data-type="portal">🌀 Portal</div>
+          <div class="toolbox game-panel">
+            <h3 class="toolbox-title">Elements</h3>
+            <div class="draggable-item" draggable="true" data-type="block">
+              <span class="item-icon">🧱</span>
+              <span class="item-name">Stone Block</span>
+            </div>
+            <div class="draggable-item" draggable="true" data-type="gem">
+              <span class="item-icon">💎</span>
+              <span class="item-name">Arcane Gem</span>
+            </div>
+            <div class="draggable-item" draggable="true" data-type="trap">
+              <span class="item-icon">🔥</span>
+              <span class="item-name">Fire Trap</span>
+            </div>
+            <div class="draggable-item" draggable="true" data-type="portal">
+              <span class="item-icon">🌀</span>
+              <span class="item-name">Portal</span>
+            </div>
+            
+            <hr class="toolbox-divider" />
+            <h3 class="toolbox-title">Board Tools</h3>
+            <button class="btn btn-outline board-tool-btn" id="btn-shuffle">🔀 Shuffle Board</button>
+            <button class="btn btn-outline board-tool-btn" id="btn-autofill">🎲 Random Fill</button>
+            <button class="btn btn-danger board-tool-btn" id="btn-clear">🗑️ Clear Board</button>
           </div>
           
           <!-- Canvas (Dropzone) -->
-          <div class="canvas glass-panel" id="puzzle-canvas">
-            <div class="canvas-placeholder">Drag elements here to build your puzzle</div>
+          <div class="canvas-wrapper">
+            <div class="canvas game-board" id="puzzle-canvas">
+              <div class="canvas-placeholder">Select elements to build your puzzle</div>
+            </div>
           </div>
         </div>
       </section>
